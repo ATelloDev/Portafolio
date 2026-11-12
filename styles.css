@@ -125,16 +125,6 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .hero__desc strong { color: var(--text); font-weight: 600; }
 
-.hero__quote {
-  margin: 0 0 2rem;
-  padding-left: 1.2rem;
-  border-left: 2px solid var(--accent);
-  color: var(--muted);
-  font-size: 0.95rem;
-  font-style: italic;
-  max-width: 52ch;
-}
-
 .hero__actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.8rem; }
 
 .hero__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
@@ -424,8 +414,7 @@ a.hero__meta-item:hover { color: var(--accent); }
   .hero { padding-top: calc(var(--nav-h) + 56px); }
   .hero__inner { text-align: center; margin-inline: auto; }
   .hero__eyebrow { margin-bottom: 0.9rem; }
-  .hero__desc, .hero__quote { margin-inline: auto; }
-  .hero__quote { text-align: left; }
+  .hero__desc { margin-inline: auto; }
   .hero__actions, .hero__meta, .hero__chips { justify-content: center; }
   .hero__stats { margin-top: 3.5rem; }
 }
