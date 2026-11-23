@@ -5,15 +5,15 @@
 const PALETTES = [
   {
     id: "menta-fresca", dark: false,
-    bg: "#eceff1", bg2: "#eceff1", surface: "#ffffff", surface2: "#eaf7f1",
-    border: "#d9ebe2", strong: "#b5d6c6", text: "#111111", muted: "#707070",
-    accent: "#26ab7a", accent2: "#10b981", onAccent: "#ffffff",
+    bg: "#eceff1", bg2: "#eceff1", surface: "#ffffff", surface2: "#e9f0f7",
+    border: "#d9e3ec", strong: "#b3c7da", text: "#111111", muted: "#707070",
+    accent: "#0056b3", accent2: "#1a6ec9", onAccent: "#ffffff",
   },
   {
     id: "bosque-oscuro", dark: true,
-    bg: "#0d1117", bg2: "#090d13", surface: "#14221d", surface2: "#1a2d26",
-    border: "#234036", strong: "#35594c", text: "#e3efe9", muted: "#b5b5b5",
-    accent: "#26ab7a", accent2: "#6ee7b7", onAccent: "#ffffff",
+    bg: "#0d1117", bg2: "#090d13", surface: "#121a26", surface2: "#182233",
+    border: "#233549", strong: "#3a557a", text: "#e6ecf4", muted: "#b5b5b5",
+    accent: "#4d94ff", accent2: "#8ab8ff", onAccent: "#ffffff",
   },
 ];
 
@@ -81,6 +81,9 @@ const PALETTES = [
       if (target) applyTheme(target);
     });
   }
+
+  // ---------- Limpiar selección de acento previa ----------
+  try { localStorage.removeItem("atello-accent"); } catch { /* sin acceso */ }
 
   // ---------- Restaurar tema guardado ----------
   const fallback = PALETTES.find((p) => p.id === LIGHT_ID);
