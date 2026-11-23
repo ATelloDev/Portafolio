@@ -71,8 +71,9 @@ const PROJECTS = {
     ],
     flow: [
       ["Operador", "Despeje en software", "El operador realiza el despeje de línea y lo confirma en la aplicación de escritorio — sin este registro nada se habilita."],
-      ["PC de control", "C# · .NET", "La aplicación valida el registro del despeje y envía el comando de liberación por el canal serial."],
-      ["Interfaz serial", "RS-232", "El canal serial transmite los comandos entre la PC y el módulo electrónico de forma confiable y verificable."],
+      ["PC de control", "C# · .NET", "La aplicación recibe el registro del despeje y determina si la estación puede liberarse."],
+      ["Validación", "¿Despeje registrado?", "El software verifica que el despeje esté confirmado: sin registro, el relé mantiene el pedal bloqueado y la impresora inhabilitada.", null, "decision", ["Pedal + impresora bloqueados", "Mientras el despeje no esté registrado en el software, el relé mantiene el pedal bloqueado y la impresora inhabilitada — la etiqueta no puede imprimirse."], ["Habilitar despeje", "Despeje activo · flujo habilitado"]],
+      ["Interfaz serial", "RS-232", "Confirmado el despeje, la PC envía el comando de liberación por el canal serial de forma confiable y verificable."],
       ["Módulo ESP32", "Relé de bloqueo", "Mientras no llega la liberación, el relé mantiene bloqueado el pedal; al recibir el comando lo suelta.", ["assets/img/components/c1.png", "assets/img/components/c2.png"]],
       ["Pedal + Impresora", "Etiqueta habilitada", "Con el pedal liberado se habilita la impresión de la etiqueta de liberación — inaccesible sin despeje previo."],
     ],
@@ -107,7 +108,8 @@ const PROJECTS = {
     ],
     flow: [
       ["Usuario", "Interfaz Tkinter", "El usuario interactúa con formularios gráficos para capturar y consultar información académica."],
-      ["Capa de lógica", "Python", "Las reglas de negocio validan cada operación: altas, cambios, borrado lógico e inscripciones."],
+      ["Capa de lógica", "Python", "Las reglas de negocio procesan cada operación: altas, cambios, borrado lógico e inscripciones."],
+      ["Validación", "¿Operación válida?", "Las reglas de negocio aprueban o rechazan la operación; cada intento queda registrado en la bitácora de auditoría.", null, "decision", ["Operación rechazada", "La operación no cumple las reglas de negocio: se rechaza y queda asentada en la bitácora de auditoría."], ["Rechazar operación", "Operación válida · flujo habilitado"]],
       ["Persistencia", "SQLite", "Toda la información se almacena localmente en una base de datos SQLite embebida."],
       ["Salidas", "CSV · Backups · Auditoría", "El sistema genera respaldos, exportaciones CSV y una bitácora de auditoría de cada operación."],
     ],
@@ -140,6 +142,7 @@ const PROJECTS = {
     flow: [
       ["Robot de soldadura", "Resultados por unidad", "El robot genera el resultado de cada unidad soldada que procesa."],
       ["Servicio colector", "Python", "Un servicio en Python lee, interpreta y normaliza los resultados de forma automática y continua."],
+      ["Validación", "¿Lectura válida?", "El colector descarta lecturas incompletas o corruptas antes de persistirlas — solo datos confiables alimentan las métricas.", null, "decision", ["Lectura descartada", "La lectura llega incompleta o corrupta: se omite del histórico y el error queda registrado en bitácora."], ["Descartar lectura", "Lectura válida · flujo habilitado"]],
       ["Base de datos", "SQLite", "Los resultados se persisten con histórico para análisis por fecha, turno o programa."],
       ["API REST", "Endpoints de métricas", "Los endpoints exponen FPY y yield ya agregados, listos para ser consumidos."],
       ["Monitor en vivo", "Tablero web", "El tablero muestra los indicadores en vivo, permitiendo detectar anomalías de inmediato."],
@@ -175,7 +178,8 @@ const PROJECTS = {
     ],
     flow: [
       ["Selección de setup", "Producto / programa destino", "El operador elige el setup requerido desde la interfaz, local o remota."],
-      ["Motor de cambio", "C# / .NET", "La aplicación orquesta los pasos del cambio: valida el estado actual y prepara la transición."],
+      ["Motor de cambio", "C# / .NET", "La aplicación orquesta los pasos del cambio y prepara la transición."],
+      ["Validación", "¿Estado actual válido?", "Antes de aplicar cambios, el software verifica que la estación esté en un estado consistente; de lo contrario cancela la operación.", null, "decision", ["Cambio cancelado", "La estación no está en un estado consistente: el cambio se aborta y se notifica al operador sin tocar archivos ni configuración."], ["Cancelar cambio", "Estado válido · flujo habilitado"]],
       ["Gestión de archivos", "Mover, copiar, renombrar", "Los archivos y configuraciones de la estación se ajustan automáticamente al nuevo setup."],
       ["Configuración de equipo", "Nombre y parámetros", "El equipo queda renombrado y configurado acorde al producto a fabricar."],
       ["Máquina lista", "Setup completado", "La estación queda operativa en una fracción del tiempo que tomaba el proceso manual."],
@@ -209,7 +213,8 @@ const PROJECTS = {
       ["PCB entrante", "Tarjeta ensamblada", "La tarjeta llega a la estación de inspección antes de pasar al área de análisis de fallas."],
       ["Estación AOI", "Webcams Logitech 1080p", "Las cámaras capturan la imagen de la PCB con la resolución necesaria para distinguir soldaduras y componentes."],
       ["Análisis de imagen", "Visión artificial", "El software procesa la captura y evalúa soldaduras, presencia y orientación de los componentes."],
-      ["Veredicto", "Pass / Fail", "Las tarjetas conformes continúan su flujo; las rechazadas se identifican para revisión."],
+      ["Veredicto", "¿Pieza conforme?", "El resultado del análisis se compara contra los criterios de aceptación definidos para el producto.", null, "decision", ["Fail: a revisión", "La tarjeta no cumple los criterios de aceptación: se identifica y se aparta para el análisis de fallas."], ["Marcar Fail", "Pieza conforme · Pass"]],
+      ["PCB liberada", "Pass · continúa el flujo", "Las tarjetas conformes avanzan al siguiente proceso de la línea."],
     ],
     docs: [
       { label: "Documentación de la estación AOI", meta: "Interno" },
@@ -221,16 +226,33 @@ const PROJECTS = {
 const renderProject = (slug) => {
   const p = PROJECTS[slug];
   if (!p) return;
+  const decIdx = p.flow.findIndex((n) => n[4] === "decision");
   const flow = p.flow
-    .map(
-      (n, i) => `
-        ${i ? '<span class="flow__arrow" aria-hidden="true">→</span>' : ""}
-        <button type="button" class="flow__node" data-step="${i}" aria-label="Paso ${i + 1}: ${n[0]}">
-          <span class="flow__num">${i + 1}</span>
-          ${n[3] ? `<span class="flow__imgs">${n[3].map((s) => `<img src="${s}" alt="" loading="lazy">`).join("")}</span>` : ""}
-          <strong>${n[0]}</strong><small>${n[1]}</small>
-        </button>`
-    )
+    .map((n, i) => {
+      const decision = n[4] === "decision";
+      const cls = [
+        "flow__node",
+        i === 0 || i === p.flow.length - 1 ? "flow__node--terminal" : "",
+        decision ? "flow__node--decision" : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+      const inner = decision
+        ? `<small class="flow__cap">${n[0]}</small><strong>${n[1]}</strong>`
+        : `${n[3] ? `<span class="flow__imgs">${n[3].map((s) => `<img src="${s}" alt="" loading="lazy">`).join("")}</span>` : ""}<strong>${n[0]}</strong><small>${n[1]}</small>`;
+      const node = `<button type="button" class="${cls}" data-step="${i}" aria-label="Paso ${i + 1}: ${n[0]}"><span class="flow__num">${i + 1}</span>${inner}</button>`;
+      if (decision) {
+        const rj = n[5]
+          ? `<button type="button" class="flow__reject" data-reject="${i}" aria-label="Rama No: ${n[5][0]}"><span class="flow__reject-tag">✗ No</span><span class="flow__reject-txt">${n[5][0]}</span></button>`
+          : "";
+        return `
+        ${i ? '<span class="flow__arrow" aria-hidden="true"><i></i><i></i></span>' : ""}
+        <div class="flow__fork">${node}${rj}</div>`;
+      }
+      return `
+        ${i ? `<span class="flow__arrow${p.flow[i - 1][4] === "decision" ? " flow__arrow--yes" : ""}" aria-hidden="true"><i></i><i></i></span>` : ""}
+        ${node}`;
+    })
     .join("");
   const docs = p.docs
     .map((d) =>
@@ -280,9 +302,14 @@ const renderProject = (slug) => {
       </section>
 
       <section class="pd-section">
-        <h2>Diagrama de bloques</h2>
-        <p class="flow__hint">Toca cada bloque para ver qué hace en el sistema.</p>
+        <h2>Diagrama de flujo</h2>
+        <p class="flow__hint">Toca un paso para ver qué hace; con el botón de simulación habilitas o bloqueas el flujo.</p>
         <div class="flow">
+          ${
+            decIdx >= 0 && p.flow[decIdx][6]
+              ? `<div class="flow__controls"><span class="flow__controls-tag">Simulación</span><button type="button" class="flow__enable" data-switch="${decIdx}"><i></i><span>${p.flow[decIdx][6][0]}</span></button></div>`
+              : ""
+          }
           <div class="flow__track">${flow}</div>
           <div class="flow__panel">
             <span class="flow__step-label">Paso 1 de ${p.flow.length}</span>
@@ -328,18 +355,51 @@ const initFlow = (steps) => {
   const label = wrap.querySelector(".flow__step-label");
   const bar = wrap.querySelector(".flow__progress i");
 
+  const rejects = [...wrap.querySelectorAll(".flow__reject")];
+  const switches = [...wrap.querySelectorAll(".flow__enable")];
+  const branchState = {}; // idx -> true = rama Sí activa (por defecto apagado = No)
+
   const setStep = (i) => {
+    const isDec = steps[i][4] === "decision";
+    const no = isDec && !branchState[i];
     nodes.forEach((n, j) => {
       n.classList.toggle("is-active", j === i);
       n.classList.toggle("is-done", j < i);
     });
-    arrows.forEach((a, j) => a.classList.toggle("is-done", j < i));
-    desc.textContent = steps[i][2];
-    label.textContent = `Paso ${i + 1} de ${steps.length} · ${steps[i][0]}`;
+    arrows.forEach((a, j) => {
+      a.classList.toggle("is-done", j < i || (j === i && isDec && !no));
+      a.classList.toggle("is-blocked", j === i && no);
+    });
+    rejects.forEach((r) => {
+      const k = +r.dataset.reject;
+      r.classList.toggle("is-active", k === i && no);
+      r.classList.toggle("is-dim", k <= i && !(k === i && no));
+    });
+    switches.forEach((s) => {
+      const k = +s.dataset.switch;
+      const on = !!branchState[k];
+      s.classList.toggle("is-on", on);
+      s.querySelector("span").textContent = steps[k][6][on ? 1 : 0];
+    });
+    desc.textContent = no && steps[i][5] ? steps[i][5][1] : steps[i][2];
+    label.textContent = `Paso ${i + 1} de ${steps.length} · ${steps[i][0]}${isDec ? ` · rama: ${no ? "No" : "Sí"}` : ""}`;
     bar.style.width = `${((i + 1) / steps.length) * 100}%`;
   };
 
   nodes.forEach((n, i) => n.addEventListener("click", () => setStep(i)));
+  rejects.forEach((r) =>
+    r.addEventListener("click", () => {
+      branchState[+r.dataset.reject] = false;
+      setStep(+r.dataset.reject);
+    })
+  );
+  switches.forEach((s) =>
+    s.addEventListener("click", () => {
+      const k = +s.dataset.switch;
+      branchState[k] = !branchState[k];
+      setStep(k);
+    })
+  );
   setStep(0);
 };
 
