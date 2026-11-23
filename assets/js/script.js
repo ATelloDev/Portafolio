@@ -49,12 +49,12 @@ const closeMenu = () => {
 
 // ============ DATOS: DETALLE DE PROYECTOS ============
 const PROJECTS = {
-  "line-clearance": {
+  "x7k2": {
     num: "01",
     sector: "Manufactura médica · Proyecto destacado",
     sectorShort: "Manufactura médica",
     title: "Sistema de Bloqueo por Despeje de Línea",
-    img: "assets/img/projects/portada-line-clearance.jpg",
+    img: "assets/img/projects/p1.jpg",
     alt: "Diagrama del Sistema de Bloqueo por Despeje de Línea",
     desc: "Interlock de seguridad para línea de dispensado: la etiqueta de liberación solo puede imprimirse si el despeje de línea se registró en el software. Mientras no se complete el despeje, el ESP32 mantiene el relé bloqueando el pedal y la impresora permanece inhabilitada.",
     tags: ["C#", ".NET", "ESP32", "RS-232", "Relé"],
@@ -73,7 +73,7 @@ const PROJECTS = {
       ["Operador", "Despeje en software", "El operador realiza el despeje de línea y lo confirma en la aplicación de escritorio — sin este registro nada se habilita."],
       ["PC de control", "C# · .NET", "La aplicación valida el registro del despeje y envía el comando de liberación por el canal serial."],
       ["Interfaz serial", "RS-232", "El canal serial transmite los comandos entre la PC y el módulo electrónico de forma confiable y verificable."],
-      ["Módulo ESP32", "Relé de bloqueo", "Mientras no llega la liberación, el relé mantiene bloqueado el pedal; al recibir el comando lo suelta.", ["assets/img/components/esp32.png", "assets/img/components/relay.png"]],
+      ["Módulo ESP32", "Relé de bloqueo", "Mientras no llega la liberación, el relé mantiene bloqueado el pedal; al recibir el comando lo suelta.", ["assets/img/components/c1.png", "assets/img/components/c2.png"]],
       ["Pedal + Impresora", "Etiqueta habilitada", "Con el pedal liberado se habilita la impresión de la etiqueta de liberación — inaccesible sin despeje previo."],
     ],
     docs: [
@@ -85,12 +85,12 @@ const PROJECTS = {
       caption: "Video de referencia del principio de operación: control de relés industriales con ESP32.",
     },
   },
-  "sistema-academico": {
+  "n9r4": {
     num: "05",
     sector: "Educación · Certificación",
     sectorShort: "Educación",
     title: "Sistema Académico EC0835",
-    img: "assets/img/projects/ec0835.jpg",
+    img: "assets/img/projects/p5.jpg",
     alt: "Interfaz del Sistema Académico EC0835",
     desc: "App de escritorio para gestión de estudiantes, cursos e inscripciones con CRUD, borrado lógico, auditoría, backups y exportación CSV.",
     tags: ["Python", "Tkinter", "SQLite"],
@@ -112,17 +112,17 @@ const PROJECTS = {
       ["Salidas", "CSV · Backups · Auditoría", "El sistema genera respaldos, exportaciones CSV y una bitácora de auditoría de cada operación."],
     ],
     docs: [
-      { label: "Manual de usuario", meta: "PDF", href: "projects/ec0835/docs/manual-usuario.pdf" },
-      { label: "Manual técnico", meta: "PDF", href: "projects/ec0835/docs/manual-tecnico.pdf" },
-      { label: "Ejecutable Producto 2.1", meta: "EXE · Windows", href: "projects/ec0835/dist/Producto_2.1_Ejecutable_AlejandroTello.exe" },
+      { label: "Manual de usuario", meta: "PDF", href: "files/m1.pdf" },
+      { label: "Manual técnico", meta: "PDF", href: "files/m2.pdf" },
+      { label: "Ejecutable Producto 2.1", meta: "EXE · Windows", href: "files/a1.exe" },
     ],
   },
-  "dashboard-fpy": {
+  "b3t6": {
     num: "04",
     sector: "Manufactura médica",
     sectorShort: "Manufactura médica",
     title: "Monitor de Robot de Soldadura — FPY en vivo",
-    img: "assets/img/projects/stock-dashboard.jpg",
+    img: "assets/img/projects/p4.jpg",
     alt: "Dashboard de métricas en tiempo real",
     desc: "Monitoreo en tiempo real del proceso del robot de soldadura con registro automatizado de resultados, FPY e indicadores en vivo.",
     tags: ["Python", "REST API", "SQLite", "JavaScript"],
@@ -149,16 +149,16 @@ const PROJECTS = {
       { label: "Guía de operación del monitor", meta: "Interno" },
     ],
     video: {
-      mp4: "assets/img/projects/video-fpy.mp4",
+      mp4: "assets/img/projects/p4.mp4",
       caption: "Demostración del monitor de robot de soldadura operando en tiempo real.",
     },
   },
-  "setup-remoto": {
+  "q8w5": {
     num: "03",
     sector: "Manufactura médica",
     sectorShort: "Manufactura médica",
     title: "Software de Cambio de Setup",
-    img: "assets/img/projects/setup-remoto.jpg",
+    img: "assets/img/projects/p3.jpg",
     alt: "Operador ajustando el panel de control de una máquina industrial",
     desc: "Aplicación que reduce el tiempo de cambio de setup en máquinas industriales: automatiza el movimiento de archivos, el renombrado del equipo y la configuración de la estación, con opción de ejecutar el cambio de forma remota.",
     tags: ["C#", ".NET", "SQL", "Acceso remoto"],
@@ -185,12 +185,12 @@ const PROJECTS = {
       { label: "Guía de cambios en remoto", meta: "Interno" },
     ],
   },
-  "inspeccion-aoi": {
+  "m4d9": {
     num: "02",
     sector: "Manufactura médica",
     sectorShort: "Manufactura médica",
     title: "Sistema de Inspección de PCBs (AOI)",
-    img: "assets/img/projects/aoi-pcb.jpg",
+    img: "assets/img/projects/p2.jpg",
     alt: "Macro de tarjeta PCB con componentes soldados",
     desc: "Estación de inspección óptica automatizada para detectar soldaduras deficientes, componentes invertidos o faltantes antes de liberar las tarjetas al área de análisis de fallas.",
     tags: ["AOI", "Python", "OpenCV", "Webcams 1080p"],
@@ -356,7 +356,7 @@ const viewTitles = {
 const parseRoute = () => {
   const h = location.hash.replace(/^#\/?/, "");
   const [view, param] = h.split("/");
-  if (view === "proyecto" && PROJECTS[param]) return { name: "proyecto", slug: param };
+  if (view === "p" && PROJECTS[param]) return { name: "proyecto", slug: param };
   return { name: VIEWS.includes(view) ? view : "sobre-mi", slug: null };
 };
 

@@ -17,7 +17,7 @@
   --menu-bg: rgba(243, 250, 247, 0.97);
   --radius: 14px;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-head: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-head: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --nav-h: 64px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
